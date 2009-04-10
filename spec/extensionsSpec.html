@@ -19,7 +19,7 @@
 
 describe('Extensions', {
   'should know how to inspect an object': function() {
-    value_of($.inspect({ooga: 1, booga: 'meh'})).should_be("prototype : undefined | fn : undefined | extend : undefined | noConflict : undefined | isFunction : undefined | isArray : undefined | isXMLDoc : undefined | globalEval : undefined | nodeName : undefined | each : undefined | prop : undefined | className : undefined | swap : undefined | css : undefined | curCSS : undefined | clean : undefined | attr : undefined | trim : undefined | makeArray : undefined | inArray : undefined | merge : undefined | unique : undefined | grep : undefined | map : undefined | browser : undefined | cache : undefined | data : undefined | removeData : undefined | queue : undefined | dequeue : undefined | find : undefined | filter : undefined | expr : undefined | multiFilter : undefined | dir : undefined | nth : undefined | sibling : undefined | event : undefined | Event : undefined | isReady : undefined | readyList : undefined | ready : undefined | support : undefined | props : undefined | get : undefined | getScript : undefined | getJSON : undefined | post : undefined | ajaxSetup : undefined | ajaxSettings : undefined | lastModified : undefined | ajax : undefined | handleError : undefined | active : undefined | httpSuccess : undefined | httpNotModified : undefined | httpData : undefined | param : undefined | speed : undefined | easing : undefined | timers : undefined | fx : undefined | offset : undefined | boxModel : undefined | isConsolePresent : undefined | log : undefined | inspect : undefined | newEl : undefined | returning : undefined | setupInheritanceChain : undefined | createEvent : undefined | extendz : undefined | ");
+    value_of($.inspect({ooga: 1, booga: 'meh'})).should_be("ooga : 1 | booga : meh");
   },
 
   'should know how to subclass an object': function() {
@@ -39,7 +39,50 @@ describe('Extensions', {
 
     Foo.extendz(Ooga);
 
+    var fooOne = new Foo();
     value_of(fooOne.meh()).should_be('Ooga: meh');
+  },
+
+  'should know its superclass': function() {
+    function Ooga(){};
+    function Foo(){};
+
+    Foo.extendz(Ooga);
+    value_of(Foo.baseConstructor.name).should_be('Ooga');
+  },
+
+  'should know its super class all instances when subclassed': function() {
+    function Ooga(){};
+    function Foo(){};
+
+    var fooOne = new Foo();
+
+    value_of(fooOne.constructor.name).should_be('Foo');
+    value_of(fooOne.constructor.baseConstructor).should_be(null);
+
+    Foo.extendz(Ooga);
+
+    var fooTwo = new Foo();
+    value_of(fooTwo.constructor.baseConstructor.name).should_be('Ooga');
+    value_of(fooOne.constructor.baseConstructor.name).should_be('Ooga');
+  },
+
+  'should not inherit behaviour across all instances when subclassed': function() {
+    function Ooga(){};
+    Ooga.prototype = {meh: function(){return 'Ooga: meh'}};
+
+    function Foo(){};
+    Foo.prototype={ah: function(){return 'Foo: ah'}};
+
+    var fooOne = new Foo();
+    Foo.extendz(Ooga);
+
+    try{
+      fooOne.meh();
+    }
+    catch(error){
+      value_of(error.message).should_be('fooOne.meh is not a function');
+    }
   }
 })
 // ]]>
