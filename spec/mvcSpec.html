@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+  <title>JSSpec results</title>
+  <link rel="stylesheet" type="text/css" href="../stylesheets/JSSpec.css"/>
+
+  <link rel="stylesheet" type="text/css" href="../stylesheets/dns_webapp.css"/>
+
+  <script type="text/javascript" src="../lib/jquery-1.3.2.min.js"></script>
+  <script type="text/javascript" src="../lib/diff_match_patch.js"></script>
+  <script type="text/javascript" src="../lib/JSSpec.js"></script>
+  <script type="text/javascript" src="../lib/extensions.js"></script>
+
+  <script type="text/javascript" src="../src/mvc.js"></script>
+</head>
+<body>
+<div id="debug"></div>
+<div id="testDiv"></div>
+<script type="text/javascript">// <![CDATA[
+
+describe('View', {
+  before_each: function(){
+    testDiv = $('#testDiv');
+  },
+
+  'should know how to make elements accessible by id': function(){
+    var testButton =  $.newEl('button', {id: 'testButton'});
+    testDiv.append(testButton);
+
+    var view = new View([testButton]);
+    value_of(view[testButton.id][0]).should_be(testButton);
+  },
+
+  'should know how to bind a handler to a view entity without the jQuery this hack': function() {
+    var testButton =  $.newEl('button', {id: 'testButton'});
+    testDiv.append(testButton);
+
+    var view = new View([testButton]);
+    var model = new Model(view);
+    model.aHandlerInvoked = false;
+
+    model.aHandler = function(){
+      this.aHandlerInvoked = true;
+    }
+
+    model.observe(testButton.id, 'click', 'aHandler');
+    testButton.click();
+    value_of(model.aHandlerInvoked).should_be(true);
+  }
+})
+// ]]>
+</script>
+</body>
+</html>
