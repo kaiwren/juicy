@@ -5,9 +5,6 @@ function View(_elements) {
 }
 
 View.prototype = {
-  bindHandler: function(elementId, eventType, handlerFn){
-    this[elementId].bind(eventType, handlerFn);
-  }
 }
 
 function Model(_view) {
@@ -17,11 +14,22 @@ function Model(_view) {
 Model.prototype = {
   buildHandlerWithoutThisHack: function(fn){
     var instance = this;
-    return function(e){ fn.call(instance, e) };
+    return function(e){
+      fn.call(instance, e);
+    };
   },
 
   observe: function(elementId, eventName, handlerName){
     this.view[elementId].bind(eventName, this.buildHandlerWithoutThisHack(this[handlerName]));
+  },
+
+  onChange: function(e){
+    this[e.target.id] = ($(e.target).attr('value'));
+  },
+
+  dataBind: function(elementId){
+    this.observe(elementId, 'change', 'onChange');
+    this[elementId] = '';
   }
 }
 

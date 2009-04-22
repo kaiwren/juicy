@@ -16,12 +16,17 @@
 </head>
 <body>
 <div id="debug"></div>
-<div id="testDiv"></div>
 <script type="text/javascript">// <![CDATA[
 
+
+
 describe('View', {
+  before_all: function(){
+    $('#list').append($.newEl('div', {id: 'testDiv'}));
+  },
+
   before_each: function(){
-    testDiv = $('#testDiv');
+    testDiv = $("#testDiv").empty();
   },
 
   'should know how to make elements accessible by id': function(){
@@ -47,6 +52,21 @@ describe('View', {
     model.observe(testButton.id, 'click', 'aHandler');
     testButton.click();
     value_of(model.aHandlerInvoked).should_be(true);
+  },
+
+  'should data bind a model to a view element': function() {
+    var testInput =  $.newEl('input', {id: 'testInput', type: 'text'});
+    testDiv.append(testInput);
+
+    var view = new View([testInput]);
+    var model = new Model(view);
+
+    model.dataBind(testInput.id);
+
+    $(testInput).attr('value', 'ooga');
+    $(testInput).change();
+
+    value_of(model.testInput).should_be('ooga');
   }
 })
 // ]]>

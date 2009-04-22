@@ -3,17 +3,42 @@
 <html>
 <head>
   <title>Juicy Demo</title>
-  <script type="text/javascript" src="lib/jquery-1.3.2.min.js"></script>
+  <script type="text/javascript" src="lib/jquery-1.3.2.js"></script>
   <script type="text/javascript" src="lib/extensions.js"></script>
   <script type="text/javascript" src="src/mvc.js"></script>
   <script type="text/javascript" src="src/juicy.js"></script>
 </head>
 <body>
-  <div id="container"></div>
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $('#container').juicyTags();
-    });
-  </script>
+<div id="container"></div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+  function Ooga() {
+    this.name = 'Ooga';
+  }
+
+  Ooga.prototype = {
+    meh: function() {
+      $.log(11);
+      $.log(this);
+      $.log(this.name);
+    }
+  }
+
+  function Booga() {
+    this.name = 'Booga';
+  }
+
+  Booga.prototype = {
+    woot: function(fn) {
+      fn();
+    }
+  }
+
+  new Ooga().meh();
+  new Booga().woot(new Ooga().meh);
+  });
+</script>
 </body>
 </html>
